@@ -1,0 +1,181 @@
+{
+  "creditcard": {
+    "name": "Credit Card Fraud",
+    "status": "completed",
+    "split_type": "chronological",
+    "rows": 284807,
+    "positives": 492,
+    "prevalence": 0.001727,
+    "prevalence_pct": 0.1727,
+    "rows_sent": {
+      "fit": 712,
+      "fit_positives": 356,
+      "fit_negatives": 356,
+      "val": 15703,
+      "val_total": 39872,
+      "val_subsampled": true,
+      "total_train_sent": 16415
+    },
+    "test_rows": 85443,
+    "payload_mb": 4.24,
+    "pr_auc": 0.7522,
+    "roc_auc": 0.9782,
+    "precision": 0.871,
+    "recall": 0.75,
+    "f1": 0.806,
+    "accuracy": 0.9995,
+    "decision_threshold": 0.8,
+    "thresholds": {
+      "decision": 0.8,
+      "review": 0.72,
+      "block": 0.8,
+      "block_target_met": true
+    },
+    "confusion_matrix": {
+      "tp": 81,
+      "fp": 12,
+      "fn": 27,
+      "tn": 85323
+    },
+    "elapsed_sec": 12
+  },
+  "elliptic": {
+    "name": "Elliptic Bitcoin",
+    "status": "exceeds_budget",
+    "error": "Fit slice alone (8.64 MB) exceeds 4.5 MB budget. Dataset cannot fit within API limits.",
+    "split_type": "chronological",
+    "rows": 46564,
+    "positives": 4545,
+    "prevalence": 0.097608,
+    "prevalence_pct": 9.7608,
+    "features": 165,
+    "rows_sent": null,
+    "payload_mb": null,
+    "pr_auc": null,
+    "roc_auc": null,
+    "precision": null,
+    "recall": null,
+    "f1": null,
+    "confusion_matrix": null
+  },
+  "ethereum": {
+    "name": "Ethereum Fraud",
+    "status": "completed",
+    "split_type": "seeded",
+    "rows": 9841,
+    "positives": 2179,
+    "prevalence": 0.221421,
+    "prevalence_pct": 22.1421,
+    "rows_sent": {
+      "fit": 2370,
+      "fit_positives": 1185,
+      "fit_negatives": 1185,
+      "val": 1377,
+      "val_total": 1377,
+      "val_subsampled": false,
+      "total_train_sent": 3747
+    },
+    "test_rows": 2953,
+    "payload_mb": 0.54,
+    "pr_auc": 0.9953,
+    "roc_auc": 0.9984,
+    "precision": 0.9761,
+    "recall": 0.9688,
+    "f1": 0.9724,
+    "accuracy": 0.9875,
+    "decision_threshold": 0.66,
+    "thresholds": {
+      "decision": 0.66,
+      "review": 0.66,
+      "block": 0.66,
+      "block_target_met": true
+    },
+    "confusion_matrix": {
+      "tp": 653,
+      "fp": 16,
+      "fn": 21,
+      "tn": 2263
+    },
+    "elapsed_sec": 5.7
+  },
+  "bitcoinheist": {
+    "name": "BitcoinHeist Ransomware",
+    "status": "completed",
+    "split_type": "chronological",
+    "rows": 291670,
+    "positives": 4131,
+    "prevalence": 0.014163,
+    "prevalence_pct": 1.4163,
+    "rows_sent": {
+      "fit": 3932,
+      "fit_positives": 1966,
+      "fit_negatives": 1966,
+      "val": 40833,
+      "val_total": 40833,
+      "val_subsampled": false,
+      "total_train_sent": 44765
+    },
+    "test_rows": 87501,
+    "payload_mb": 1.36,
+    "pr_auc": 0.0115,
+    "roc_auc": 0.5194,
+    "precision": 0.0136,
+    "recall": 0.7838,
+    "f1": 0.0267,
+    "accuracy": 0.378,
+    "decision_threshold": 0.5,
+    "thresholds": {
+      "decision": 0.5,
+      "review": 0.48,
+      "block": 0.5,
+      "block_target_met": false
+    },
+    "confusion_matrix": {
+      "tp": 747,
+      "fp": 54219,
+      "fn": 206,
+      "tn": 32329
+    },
+    "elapsed_sec": 6.3
+  },
+  "taiwan": {
+    "name": "Taiwan Credit Default",
+    "status": "completed",
+    "split_type": "seeded",
+    "rows": 30000,
+    "positives": 6636,
+    "prevalence": 0.2212,
+    "prevalence_pct": 22.12,
+    "rows_sent": {
+      "fit": 7422,
+      "fit_positives": 3711,
+      "fit_negatives": 3711,
+      "val": 4200,
+      "val_total": 4200,
+      "val_subsampled": false,
+      "total_train_sent": 11622
+    },
+    "test_rows": 9000,
+    "payload_mb": 1.01,
+    "pr_auc": 0.5642,
+    "roc_auc": 0.7811,
+    "precision": 0.49,
+    "recall": 0.5852,
+    "f1": 0.5334,
+    "accuracy": 0.7718,
+    "decision_threshold": 0.55,
+    "thresholds": {
+      "decision": 0.55,
+      "review": 0.29,
+      "block": 0.92,
+      "block_target_met": true
+    },
+    "confusion_matrix": {
+      "tp": 1174,
+      "fp": 1222,
+      "fn": 832,
+      "tn": 5772
+    },
+    "elapsed_sec": 5.8
+  }
+}

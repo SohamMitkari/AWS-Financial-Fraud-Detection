@@ -1,0 +1,13 @@
+{
+  "name": "aws-financial-fraud-detection",
+  "version": "1.0.0",
+  "scripts": {
+    "test:py": "python -m pytest backend/tests/test_model.py backend/tests/test_feature_parity.py -q",
+    "test:js": "node backend/tests/test_generator.js && node backend/tests/test_causal.js && node backend/tests/verify_parity.js && node tests/test_real_mode.js && node tests/verify_real_browser.js",
+    "test:all": "npm run test:py && npm run test:js"
+  },
+  "dependencies": {
+    "puppeteer-core": "^25.15.0"
+  }
+}
+

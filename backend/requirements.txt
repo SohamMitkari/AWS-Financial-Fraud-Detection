@@ -1,0 +1,9 @@
+# Note: In AWS Lambda Python 3.12, boto3 is pre-installed in the managed runtime.
+# lightgbm and numpy are provided via the Lambda Layer (deploy/build_layer.sh).
+# This requirements.txt is provided for local testing, CI/CD, and offline verification.
+boto3>=1.34.0
+pytest>=8.0.0
+numpy>=1.26.0
+lightgbm>=4.0.0
+scipy>=1.11.0
+narwhals>=1.15.0

@@ -1,0 +1,161 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  AWS Serverless Financial Fraud Detection Platform
+  Provisions Amazon S3 Artifacts Bucket, HTTP API Gateway v2, and Python 3.12 Lambda
+
+Parameters:
+  ArtifactsBucketName:
+    Type: String
+    Default: fraud-detection-data-anish-syd
+    Description: Name of S3 bucket for model weights, scaler, and pipeline metrics
+  CreateArtifactsBucket:
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Whether to create the S3 artifacts bucket (set to 'false' if bucket already exists)
+  AllowedOrigin:
+    Type: String
+    Description: Allowed origin for CORS headers (e.g. S3 website endpoint)
+  TrainApiKey:
+    Type: String
+    NoEcho: true
+    MinLength: 16
+    Description: Shared secret for POST /train and /pipeline via x-api-key header
+
+Conditions:
+  ShouldCreateArtifactsBucket: !Equals [!Ref CreateArtifactsBucket, 'true']
+
+Resources:
+  # S3 Bucket for ML models and audit metrics
+  ArtifactsBucket:
+    Type: AWS::S3::Bucket
+    Condition: ShouldCreateArtifactsBucket
+    Properties:
+      BucketName: !Ref ArtifactsBucketName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  # HTTP API Gateway v2
+  FraudHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Name: FraudDetectionHttpApi
+      CorsConfiguration:
+        AllowOrigins:
+          - !Ref AllowedOrigin
+        AllowMethods:
+          - GET
+          - POST
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+          - Authorization
+          - X-Requested-With
+          - Accept
+          - x-api-key
+        MaxAge: 86400
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 10
+        ThrottlingRateLimit: 5
+      RouteSettings:
+        "POST /train":
+          ThrottlingBurstLimit: 2
+          ThrottlingRateLimit: 1
+
+  # Lambda Layer for LightGBM, NumPy, SciPy, and OpenMP
+  LightGbmLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: LightGBM-Python312-Layer
+      Description: LightGBM, NumPy, SciPy, and OpenMP binary layer for Python 3.12 (x86_64)
+      ContentUri: ../build/layer/lightgbm-layer.zip
+      CompatibleRuntimes:
+        - python3.12
+      CompatibleArchitectures:
+        - x86_64
+      RetentionPolicy: Retain
+
+  # Serverless Compute Engine
+  FraudPipelineLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: FraudPipelineRunner
+      CodeUri: ../backend
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.12
+      Architectures:
+        - x86_64
+      MemorySize: 2048
+      Timeout: 60
+      ReservedConcurrentExecutions: 3
+      Layers:
+        - !Ref LightGbmLayer
+      Environment:
+        Variables:
+          DATA_BUCKET_NAME: !Ref ArtifactsBucketName
+          ALLOWED_ORIGIN: !Ref AllowedOrigin
+          TRAIN_API_KEY: !Ref TrainApiKey
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource:
+                - !Sub arn:aws:s3:::${ArtifactsBucketName}/models/*
+                - !Sub arn:aws:s3:::${ArtifactsBucketName}/artifacts/*
+                - !Sub arn:aws:s3:::${ArtifactsBucketName}/pipeline_status.json
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+              Resource:
+                - !Sub arn:aws:s3:::${ArtifactsBucketName}/models/*
+      Events:
+        HealthRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref FraudHttpApi
+            Path: /health
+            Method: GET
+        ModelRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref FraudHttpApi
+            Path: /model
+            Method: GET
+        TrainRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref FraudHttpApi
+            Path: /train
+            Method: POST
+        PredictRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref FraudHttpApi
+            Path: /predict
+            Method: POST
+        PipelineCompatRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref FraudHttpApi
+            Path: /pipeline
+            Method: ANY
+
+Outputs:
+  ApiEndpoint:
+    Description: HTTP API Gateway base endpoint URL
+    Value: !Sub https://${FraudHttpApi}.execute-api.${AWS::Region}.amazonaws.com
+  ArtifactsBucketArn:
+    Description: S3 Artifacts Bucket ARN
+    Value: !Sub arn:aws:s3:::${ArtifactsBucketName}
+  LambdaFunctionArn:
+    Description: Fraud Pipeline Lambda ARN
+    Value: !GetAtt FraudPipelineLambda.Arn

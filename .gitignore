@@ -1,0 +1,47 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest & test cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environments
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# AWS SAM build artifacts
+.aws-sam/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Dependencies & Node modules
+node_modules/
+
+# Build and deployment artifacts
+build/
+deploy/lambda_function.zip
+
+# Sensitive local config overrides (template provided in frontend/config.example.js)
+frontend/config.js
+
+# Test artifacts
+artifacts/
+backend/tests/temp_*.json
+backend/tests/temp_parity_data.json
+
+# Data directory
+data/
+dataset/
+
+
+
+
+*.zip 
